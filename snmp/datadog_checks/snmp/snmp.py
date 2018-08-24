@@ -15,8 +15,8 @@ from pysnmp.error import PySnmpError
 from pyasn1.type.univ import OctetString
 
 # project
-from checks.network_checks import NetworkCheck, Status
-from config import _is_affirmative
+from datadog_checks.checks.network_checks import NetworkCheck, Status
+from datadog_checks.config import _is_affirmative
 
 
 

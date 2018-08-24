@@ -1,0 +1,10 @@
+version: '3.5'
+
+services:
+  squid:
+    image: "polinux/snmpd"
+    command: -c /etc/snmp/snmpd.conf
+    ports:
+      - "11111:161/udp"
+    volumes:
+      - ./snmpd.conf:/etc/snmp/squid.conf
