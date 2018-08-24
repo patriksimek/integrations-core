@@ -75,7 +75,7 @@ class KubeDNSCheck(OpenMetricsBaseCheck):
         """
         submit a kube_dns metric both as a gauge (for compatibility) and as a monotonic_count
         """
-        metric_name = scraper_config['NAMESPACE'] + metric_suffix
+        metric_name = scraper_config['namespace'] + metric_suffix
         for metric in message.metric:
             _tags = []
             for label in metric.label:

@@ -17,6 +17,12 @@ with open(path.join(HERE, "datadog_checks", "kube_proxy", "__about__.py")) as f:
 with open(path.join(HERE, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+# Parse requirements
+def get_requirements(fpath):
+    with open(path.join(HERE, fpath), encoding='utf-8') as f:
+        return f.readlines()
+
+
 CHECKS_BASE_REQ = 'datadog_checks_base'
 
 setup(
@@ -52,6 +58,9 @@ setup(
 
     # Run-time dependencies
     install_requires=[CHECKS_BASE_REQ],
+
+    # Testing setup and dependencies
+    tests_require=get_requirements('requirements-dev.txt'),
 
     # Extra files to ship with the wheel package
     include_package_data=True,

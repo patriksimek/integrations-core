@@ -1,6 +1,6 @@
-# (C) Datadog, Inc. 2010-2017
+# (C) Datadog, Inc. 2018
 # All rights reserved
-# Licensed under Simplified BSD License (see LICENSE)
+# Licensed under a 3-clause BSD style license (see LICENSE)
 
 # stdlib
 import os
@@ -52,9 +52,8 @@ def mock_get():
     with open(mesh_file_path, 'rb') as f:
         text_data = f.read()
 
-    p = mock.patch('requests.get', return_value=MockResponse(text_data, 'text/plain; version=0.0.4'), __name__='get')
-    yield p.start()
-    p.stop()
+    with mock.patch('requests.get', return_value=MockResponse(text_data, 'text/plain; version=0.0.4'), __name__='get'):
+        yield
 
 
 class TestKubeDNS:
