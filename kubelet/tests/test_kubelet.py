@@ -128,9 +128,8 @@ def test_parse_quantity():
 
 def test_kubelet_default_options():
     check = KubeletCheck('kubelet', None, {}, [{}])
-    check.NAMESPACE = 'kubernetes'
-    assert check.cadvisor_scraper_config['NAMESPACE'] == 'kubernetes'
-    assert check.kubelet_scraper_config['NAMESPACE'] == 'kubernetes'
+    assert check.cadvisor_scraper_config['namespace'] == 'kubernetes'
+    assert check.kubelet_scraper_config['namespace'] == 'kubernetes'
 
     assert isinstance(check.cadvisor_scraper_config, dict)
     assert isinstance(check.kubelet_scraper_config, dict)
@@ -295,7 +294,7 @@ def test_report_container_spec_metrics(monkeypatch):
     monkeypatch.setattr(check, 'gauge', mock.Mock())
 
     attrs = {'is_excluded.return_value': False}
-    check.container_filter = mock.Mock(**attrs)
+    check.pod_list_utils = mock.Mock(**attrs)
 
     pod_list = check.retrieve_pod_list()
 

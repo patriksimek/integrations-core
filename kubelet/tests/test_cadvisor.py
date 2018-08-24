@@ -62,7 +62,7 @@ def test_kubelet_check_cadvisor(monkeypatch, aggregator):
     monkeypatch.setattr(check, 'detect_cadvisor', mock.Mock(return_value=cadvisor_url))
     monkeypatch.setattr(check, 'process', mock.Mock(return_value=None))
     # We filter out slices unknown by the tagger, mock a non-empty taglist
-    monkeypatch.setattr('datadog_checks.kubelet.cadvisor.tags_for_docker',
+    monkeypatch.setattr('datadog_checks.kubelet.cadvisor.get_tags',
                         mock.Mock(return_value=["foo:bar"]))
     monkeypatch.setattr('datadog_checks.kubelet.cadvisor.tags_for_pod',
                         mock.Mock(return_value=["foo:bar"]))

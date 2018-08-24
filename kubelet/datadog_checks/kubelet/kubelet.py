@@ -19,7 +19,7 @@ from kubeutil import get_connection_info
 from tagger import get_tags
 
 # check
-from .common import CADVISOR_DEFAULT_PORT, ContainerFilter, KubeletCredentials
+from .common import CADVISOR_DEFAULT_PORT, PodListUtils, KubeletCredentials
 from .cadvisor import CadvisorScraper
 from .prometheus import CadvisorPrometheusScraperMixin
 
@@ -126,8 +126,7 @@ class KubeletCheck(CadvisorPrometheusScraperMixin, OpenMetricsBaseCheck, Cadviso
             self.log.debug('cAdvisor not found, running in prometheus mode: %s' % str(e))
 
         self.pod_list = self.retrieve_pod_list()
-
-        self.container_filter = ContainerFilter(self.pod_list)
+        self.pod_list_utils = PodListUtils(self.pod_list)
 
         self.instance_tags = instance.get('tags', [])
         self._perform_kubelet_check(self.instance_tags)
@@ -141,7 +140,7 @@ class KubeletCheck(CadvisorPrometheusScraperMixin, OpenMetricsBaseCheck, Cadviso
                 instance,
                 self.cadvisor_legacy_url,
                 self.pod_list,
-                self.container_filter
+                self.pod_list_utils
             )
         elif self.cadvisor_scraper_config['prometheus_url']:  # Prometheus
             self.log.debug('processing cadvisor metrics')
@@ -158,7 +157,7 @@ class KubeletCheck(CadvisorPrometheusScraperMixin, OpenMetricsBaseCheck, Cadviso
 
         # Free up memory
         self.pod_list = None
-        self.container_filter = None
+        self.pod_list_utils = None
 
     def perform_kubelet_query(self, url, verbose=True, timeout=10):
         """
@@ -277,14 +276,14 @@ class KubeletCheck(CadvisorPrometheusScraperMixin, OpenMetricsBaseCheck, Cadviso
 
                 for ctr_status in pod['status'].get('containerStatuses', []):
                     if ctr_status.get('name') == c_name:
-                        # it is already prefixed with 'docker://'
+                        # it is already prefixed with 'runtime://'
                         cid = ctr_status.get('containerID')
                         break
                 if not cid:
                     continue
 
                 pod_uid = pod.get('metadata', {}).get('uid')
-                if self.container_filter.is_excluded(cid, pod_uid):
+                if self.pod_list_utils.is_excluded(cid, pod_uid):
                     continue
 
                 tags = get_tags('%s' % cid, True) + instance_tags
