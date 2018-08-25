@@ -1,7 +1,7 @@
 version: '3.5'
 
 services:
-  squid:
+  snmp:
     image: "polinux/snmpd"
     command: -c /etc/snmp/snmpd.conf
     ports:

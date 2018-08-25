@@ -4,18 +4,24 @@
 
 import pytest
 import time
+import os
 
 from datadog_checks.dev import docker_run
+from datadog_checks.snmp import SnmpCheck
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-COMPOSE_DIR = os.path.join(HERE, 'docker')
+COMPOSE_DIR = os.path.join(HERE, 'compose')
+
 
 @pytest.fixture(scope='session', autouse=True)
-def spin_up_envoy():
-    flavor = os.getenv('FLAVOR', 'default')
-
+def spin_up_snmp():
     with docker_run(
-        os.path.join(COMPOSE_DIR, flavor, 'docker-compose.yaml')
+        os.path.join(COMPOSE_DIR, 'docker-compose.yaml')
     ):
         time.sleep(5)
         yield
+
+
+@pytest.fixture
+def check():
+    return SnmpCheck('snmp', {}, {}, {})
